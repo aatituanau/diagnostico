@@ -1,0 +1,6 @@
+# Node modules
+node_modules/
+
+#Temporary Files
+*.log
+.DS_Store
