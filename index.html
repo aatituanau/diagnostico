@@ -10,42 +10,43 @@
       integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
       crossorigin="anonymous"
     />
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <h1 class="text-center">Diagnostics</h1>
+    <h1 class="text-center">Football Info</h1>
 
-    <div class="row justify-content-center w-100">
+    <div class="row justify-content-center w-100 align-items-stretch">
       <div class="col-sm-5 mb-3 mb-sm-0">
-        <div class="card">
-          <div class="card-body">
+        <div class="card h-100">
+          <div class="card-body d-flex flex-column">
             <img
-              src="https://phoenixnap.com/glossary/wp-content/uploads/2024/07/what-is-a-website.jpg"
+              src="https://i.ytimg.com/vi/xtTMZkRew0I/hqdefault.jpg"
               class="card-img-top"
-              alt="..."
+              alt="Football match"
             />
-            <h5 class="card-title">Special title treatment</h5>
+            <h5 class="card-title">Match Overview</h5>
             <p class="card-text">
-              With supporting text below as a natural lead-in to additional
-              content.
+              Latest match highlights, key moments, and score summary for the
+              featured game.
             </p>
-            <a href="#" class="btn btn-primary">Save</a>
+            <a href="#" class="btn btn-primary mt-auto">Read more</a>
           </div>
         </div>
       </div>
       <div class="col-sm-4 mb-3 mb-sm-0">
-        <div class="card">
-          <div class="card-body">
+        <div class="card h-100">
+          <div class="card-body d-flex flex-column">
             <img
-              src="https://www.godaddy.com/resources/latam/wp-content/uploads/sites/4/pagina-web.jpg?size=3840x0"
+              src="https://thumbs.dreamstime.com/b/illustration-depicts-nighttime-stadium-bright-lights-crowd-fans-cheering-game-vibrant-atmosphere-exciting-event-385033559.jpg"
               class="card-img-top"
-              alt="..."
+              alt="Stadium"
             />
-            <h5 class="card-title">Special title treatment</h5>
+            <h5 class="card-title">Stadium Spotlight</h5>
             <p class="card-text">
-              With supporting text below as a natural lead-in to additional
-              content.
+              A closer look at the iconic stadiums, capacity, and fan atmosphere
+              that make each matchday special.
             </p>
-            <a href="#" class="btn btn-primary">Save</a>
+            <a href="#" class="btn btn-primary mt-auto">Explore</a>
           </div>
         </div>
       </div>
@@ -68,18 +69,20 @@
         <tbody>
           <tr>
             <th scope="row">1</th>
-            <td>Mark</td>
-            <td>Description1</td>
+            <td>FC Barcelona</td>
+            <td>
+              Spanish club known for possession-based play and La Masia academy.
+            </td>
           </tr>
           <tr>
             <th scope="row">2</th>
-            <td>Jacob</td>
-            <td>Description2</td>
+            <td>Manchester United</td>
+            <td>Historic English club with a large global fanbase.</td>
           </tr>
           <tr>
             <th scope="row">3</th>
-            <td>John</td>
-            <td>Description3</td>
+            <td>Bayern Munich</td>
+            <td>Top German side dominant in the Bundesliga and Europe.</td>
           </tr>
         </tbody>
       </table>
@@ -88,6 +91,16 @@
     <!-- API -->
     <div class="container mt-5">
       <h2 class="text-center mb-3">Soccer League⚽</h2>
+
+      <div class="d-flex justify-content-center mb-4">
+        <input
+          type="text"
+          id="search"
+          class="form-control w-50"
+          placeholder="Search league by name..."
+        />
+      </div>
+
       <div id="league-list" class="row justify-content-center text-center">
         <p>Loading leagues...</p>
       </div>
@@ -95,6 +108,7 @@
 
     <script>
       const url = "http://127.0.0.1:8000/leagues";
+      let leaguesData = [];
 
       async function getLeagues() {
         try {
@@ -102,28 +116,46 @@
           if (!response.ok) throw new Error(`Error ${response.status}`);
 
           const data = await response.json();
-          const container = document.getElementById("league-list");
-          container.innerHTML = "";
-
-          data.leagues.forEach((league) => {
-            const div = document.createElement("div");
-            div.classList.add("col-md-4", "mb-3");
-            div.innerHTML = `
-              <div class="card shadow-sm border-0">
-                <div class="card-body">
-                  <h5 class="card-title">${league.name}</h5>
-                  <p class="card-text text-muted">${league.country}</p>
-                </div>
-              </div>
-            `;
-            container.appendChild(div);
-          });
+          leaguesData = data.leagues;
+          showLeagues(leaguesData);
         } catch (error) {
           console.error(error);
           document.getElementById("league-list").innerHTML =
             '<p class="text-danger">❌ Error loading the leagues</p>';
         }
       }
+
+      function showLeagues(list) {
+        const container = document.getElementById("league-list");
+        container.innerHTML = "";
+
+        if (list.length === 0) {
+          container.innerHTML = '<p class="text-muted">No leagues found</p>';
+          return;
+        }
+
+        list.forEach((league) => {
+          const div = document.createElement("div");
+          div.classList.add("col-md-4", "mb-3");
+          div.innerHTML = `
+            <div class="card shadow-sm border-0">
+              <div class="card-body">
+                <h5 class="card-title">${league.name}</h5>
+                <p class="card-text text-muted">${league.country}</p>
+              </div>
+            </div>
+          `;
+          container.appendChild(div);
+        });
+      }
+
+      document.getElementById("search").addEventListener("input", (e) => {
+        const term = e.target.value.toLowerCase();
+        const filtered = leaguesData.filter((l) =>
+          l.name.toLowerCase().includes(term)
+        );
+        showLeagues(filtered);
+      });
 
       getLeagues();
     </script>

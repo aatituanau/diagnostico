@@ -48,3 +48,5 @@ def get_leagues():
         }
     else:
         return {"error": f"Error {response.status_code}", "detail": response.text}
+    
+    
