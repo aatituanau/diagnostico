@@ -6,17 +6,17 @@ async function getLeagues() {
     if (!response.ok) throw new Error(`Error ${response.status}`);
 
     const data = await response.json();
-    const listaDiv = document.getElementById("liga-list");
-    listaDiv.innerHTML = "";
+    const listDiv = document.getElementById("league-list");
+    listDiv.innerHTML = "";
 
-    data.ligas.forEach((liga) => {
+    data.leagues.forEach((league) => {
       const p = document.createElement("p");
-      p.textContent = `${liga.nombre} - ${liga.país}`;
-      listaDiv.appendChild(p);
+      p.textContent = `${league.name} - ${league.country}`;
+      listDiv.appendChild(p);
     });
   } catch (error) {
     console.error(error);
-    document.getElementById("liga-list").textContent =
+    document.getElementById("league-list").textContent =
       "Error loading the leagues";
   }
 }
