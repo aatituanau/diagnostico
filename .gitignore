@@ -4,3 +4,8 @@ node_modules/
 #Temporary Files
 *.log
 .DS_Store
+
+#.env files
+.env
+
+__pycache__/
