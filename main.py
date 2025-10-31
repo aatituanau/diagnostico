@@ -1,10 +1,20 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware 
 import requests
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
 app = FastAPI()
+
+#CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 API_FOOTBALL_KEY = os.getenv("API_FOOTBALL_KEY")
 
@@ -21,19 +31,20 @@ def get_leagues():
         'x-rapidapi-host': 'v3.football.api-sports.io'
     }
 
-    response = requests.request("GET", url, headers=headers)
+    response = requests.get(url, headers=headers)
 
     if response.status_code == 200:
         data = response.json()
+        leagues = [
+            {
+                "name": league["league"]["name"],
+                "country": league["country"]["name"]
+            }
+            for league in data.get("response", [])
+        ]
         return {
-            "cantidad_ligas": len(data.get("response", [])),
-            "ligas": [
-                {
-                    "nombre": league["league"]["name"],
-                    "país": league["country"]["name"]
-                }
-                for league in data.get("response", [])
-            ]
+            "league_count": len(leagues),
+            "leagues": leagues
         }
     else:
-        return {"error": f"Error {response.status_code}", "detalle": response.text}
+        return {"error": f"Error {response.status_code}", "detail": response.text}
