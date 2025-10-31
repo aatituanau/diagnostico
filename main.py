@@ -16,7 +16,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-API_FOOTBALL_KEY = os.getenv("API_FOOTBALL_KEY")
+API_KEY = os.getenv("API_KEY")
 
 @app.get("/")
 def read_root():
@@ -27,7 +27,7 @@ def get_leagues():
     url = "https://v3.football.api-sports.io/leagues"
 
     headers = {
-        'x-rapidapi-key': API_FOOTBALL_KEY,
+        'x-rapidapi-key': API_KEY,
         'x-rapidapi-host': 'v3.football.api-sports.io'
     }
 
@@ -48,5 +48,31 @@ def get_leagues():
         }
     else:
         return {"error": f"Error {response.status_code}", "detail": response.text}
-    
-    
+
+@app.get("/basketball-leagues")
+def get_basketball_leagues():
+    url = "https://v1.basketball.api-sports.io/leagues"
+    headers = {
+        'x-rapidapi-key': API_KEY,
+        'x-rapidapi-host': 'v1.basketball.api-sports.io'
+    }
+
+    response = requests.get(url, headers=headers)
+
+    if response.status_code == 200:
+        data = response.json()
+        leagues = [
+            {
+                "name": league["name"],
+                "type": league["type"],
+                "country": league["country"]["name"] if league.get("country") else "Unknown"
+            }
+            for league in data.get("response", [])
+        ]
+        return {
+            "sport": "basketball",
+            "league_count": len(leagues),
+            "leagues": leagues
+        }
+    else:
+        return {"error": f"Error {response.status_code}", "detail": response.text}
