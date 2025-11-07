@@ -1,5 +1,5 @@
 const base = "http://127.0.0.1:8000";
-let allLeagues = []; // Guardamos todas las ligas aquí
+let allLeagues = [];
 
 async function getLeagues() {
   const sport = document.getElementById("sport-select").value;
