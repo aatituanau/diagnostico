@@ -1,46 +1,47 @@
 const base = "http://127.0.0.1:8000";
-let leaguesData = [];
-
-function apiUrlForSport(sport) {
-  return sport === "basketball"
-    ? `${base}/basketball/leagues`
-    : `${base}/leagues`;
-}
+let allLeagues = []; // Guardamos todas las ligas aquí
 
 async function getLeagues() {
-  const sport = document.getElementById("sport-select")?.value || "soccer";
-  const url = apiUrlForSport(sport);
+  const sport = document.getElementById("sport-select").value;
+  const url =
+    sport === "basketball"
+      ? `${base}/basketball-leagues?limit=20`
+      : `${base}/leagues?limit=20`;
+
   try {
     const response = await fetch(url);
-    if (!response.ok) throw new Error(`Error ${response.status}`);
-
     const data = await response.json();
-    leaguesData = data.leagues || [];
-    showLeagues(leaguesData);
+    allLeagues = data.leagues || [];
+    showLeagues(allLeagues);
   } catch (error) {
-    console.error(error);
+    console.error("Error:", error);
     document.getElementById("league-list").innerHTML =
-      '<p class="text-danger">❌ Error loading the leagues</p>';
+      '<p class="text-danger text-center">❌ Error al cargar</p>';
   }
 }
 
-function showLeagues(list) {
+function showLeagues(leagues) {
   const container = document.getElementById("league-list");
   container.innerHTML = "";
 
-  if (!Array.isArray(list) || list.length === 0) {
-    container.innerHTML = '<p class="text-muted">No leagues found</p>';
+  if (leagues.length === 0) {
+    container.innerHTML = '<p class="text-center">No hay ligas</p>';
     return;
   }
 
-  list.forEach((league) => {
+  leagues.forEach((league) => {
     const div = document.createElement("div");
-    div.classList.add("col-md-4", "mb-3");
+    div.className = "col-md-4 col-sm-6 mb-3";
     div.innerHTML = `
-      <div class="card shadow-sm border-0">
+      <div class="card h-100">
         <div class="card-body">
-          <h5 class="card-title">${league.name}</h5>
-          <p class="card-text text-muted">${league.country || ""}</p>
+          ${
+            league.logo
+              ? `<img src="${league.logo}" class="mb-2" style="height: 40px;">`
+              : ""
+          }
+          <h6 class="card-title">${league.name}</h6>
+          <p class="card-text text-muted small">${league.country}</p>
         </div>
       </div>
     `;
@@ -48,6 +49,17 @@ function showLeagues(list) {
   });
 }
 
-document.getElementById("sport-select")?.addEventListener("change", () => {
+document.getElementById("search-input").addEventListener("input", (e) => {
+  const searchTerm = e.target.value.toLowerCase();
+  const filtered = allLeagues.filter((league) =>
+    league.name.toLowerCase().includes(searchTerm)
+  );
+  showLeagues(filtered);
+});
+
+document.getElementById("sport-select").addEventListener("change", () => {
+  document.getElementById("search-input").value = "";
   getLeagues();
 });
+
+getLeagues();
