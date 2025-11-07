@@ -90,132 +90,29 @@
 
     <!-- API -->
     <div class="container mt-5">
-      <h2 class="text-center mb-3">Soccer League ⚽</h2>
+      <h2 class="text-center mb-4">Sports Leagues 🏆</h2>
 
-      <div class="d-flex justify-content-center mb-4">
+      <div class="text-center mb-4">
+        <select id="sport-select" class="form-select w-50 mx-auto">
+          <option value="soccer">⚽ Soccer</option>
+          <option value="basketball">🏀 Basketball</option>
+        </select>
+      </div>
+
+      <div class="text-center mb-4">
         <input
           type="text"
-          id="search-football"
-          class="form-control w-50"
-          placeholder="Search football league by name..."
+          id="search-input"
+          class="form-control w-50 mx-auto"
+          placeholder="Buscar liga por nombre..."
         />
       </div>
 
-      <div
-        id="football-league-list"
-        class="row justify-content-center text-center"
-      >
-        <p>Loading football leagues...</p>
+      <div id="league-list" class="row justify-content-center">
+        <p class="text-center">Loading...</p>
       </div>
     </div>
 
-    <div class="container mt-5">
-      <h2 class="text-center mb-3">Basketball League 🏀</h2>
-
-      <div class="d-flex justify-content-center mb-4">
-        <input
-          type="text"
-          id="search-basketball"
-          class="form-control w-50"
-          placeholder="Search basketball league by name..."
-        />
-      </div>
-
-      <div
-        id="basketball-league-list"
-        class="row justify-content-center text-center"
-      >
-        <p>Loading basketball leagues...</p>
-      </div>
-    </div>
-
-    <script>
-      const footballUrl = "http://127.0.0.1:8000/leagues";
-      const basketballUrl = "http://127.0.0.1:8000/basketball-leagues";
-      let footballLeaguesData = [];
-      let basketballLeaguesData = [];
-
-      async function getFootballLeagues() {
-        try {
-          const response = await fetch(footballUrl);
-          if (!response.ok) throw new Error(`Error ${response.status}`);
-
-          const data = await response.json();
-          footballLeaguesData = data.leagues;
-          showLeagues(footballLeaguesData, "football-league-list");
-        } catch (error) {
-          console.error(error);
-          document.getElementById("football-league-list").innerHTML =
-            '<p class="text-danger">❌ Error loading the football leagues</p>';
-        }
-      }
-
-      async function getBasketballLeagues() {
-        try {
-          const response = await fetch(basketballUrl);
-          if (!response.ok) throw new Error(`Error ${response.status}`);
-
-          const data = await response.json();
-          basketballLeaguesData = data.leagues;
-          showLeagues(basketballLeaguesData, "basketball-league-list");
-        } catch (error) {
-          console.error(error);
-          document.getElementById("basketball-league-list").innerHTML =
-            '<p class="text-danger">❌ Error loading the basketball leagues</p>';
-        }
-      }
-
-      function showLeagues(list, containerId) {
-        const container = document.getElementById(containerId);
-        container.innerHTML = "";
-
-        if (list.length === 0) {
-          container.innerHTML = '<p class="text-muted">No leagues found</p>';
-          return;
-        }
-
-        list.forEach((league) => {
-          const div = document.createElement("div");
-          div.classList.add("col-md-4", "mb-3");
-          div.innerHTML = `
-            <div class="card shadow-sm border-0">
-              <div class="card-body">
-                <h5 class="card-title">${league.name}</h5>
-                <p class="card-text text-muted">${league.country}</p>
-                ${
-                  league.type
-                    ? `<small class="text-info">Type: ${league.type}</small>`
-                    : ""
-                }
-              </div>
-            </div>
-          `;
-          container.appendChild(div);
-        });
-      }
-
-      document
-        .getElementById("search-football")
-        .addEventListener("input", (e) => {
-          const term = e.target.value.toLowerCase();
-          const filtered = footballLeaguesData.filter((l) =>
-            l.name.toLowerCase().includes(term)
-          );
-          showLeagues(filtered, "football-league-list");
-        });
-
-      document
-        .getElementById("search-basketball")
-        .addEventListener("input", (e) => {
-          const term = e.target.value.toLowerCase();
-          const filtered = basketballLeaguesData.filter((l) =>
-            l.name.toLowerCase().includes(term)
-          );
-          showLeagues(filtered, "basketball-league-list");
-        });
-
-      getFootballLeagues();
-      getBasketballLeagues();
-    </script>
+    <script src="script.js"></script>
   </body>
 </html>
