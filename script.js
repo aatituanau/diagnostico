@@ -1,4 +1,4 @@
-const base = "http://127.0.0.1:8000";
+const base = "http://54.85.85.202:8000";
 let allLeagues = [];
 
 async function getLeagues() {
